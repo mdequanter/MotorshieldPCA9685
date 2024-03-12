@@ -12,8 +12,13 @@ http://www.apache.org/licenses/
 
 #include "MotorShield_PCA9685.h"
 
-#define I2C_SDA 14
-#define I2C_SCL 15
+// ESP32-CAM
+//#define I2C_SDA 14
+//#define I2C_SCL 15
+
+//ESPDUINO-32
+#define I2C_SDA 21
+#define I2C_SCL 22
 
 
 /**
@@ -22,6 +27,7 @@ http://www.apache.org/licenses/
 MotorShield::MotorShield(uint8_t addr){
   _i2caddr = addr;
   Wire.begin(I2C_SDA, I2C_SCL);  // On the ESP32-CAM , available I2C pins are different.  Romove params I2C_SDA, I2C_SCL for a standard setup. 
+  
 }
 
 /**
