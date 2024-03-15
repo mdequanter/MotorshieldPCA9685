@@ -22,6 +22,13 @@ int IN1_Channel = 4;
 int IN2_Channel = 5;
 int ENA_Channel = 6; 
 
+int IN3_Channel = 12;
+int IN4_Channel = 13;
+int ENB_Channel = 14; 
+
+
+
+
 
 /**
  * Drive forward
@@ -30,8 +37,14 @@ int ENA_Channel = 6;
 int forward(MotorShield PWM, int value) {
   PWM.set_channel_value(IN1_Channel, 0 );
   PWM.set_channel_value(IN2_Channel, 4095);
+  PWM.set_channel_value(IN3_Channel, 0 );
+  PWM.set_channel_value(IN4_Channel, 4095);
+  
   int resultValue = map(value, 0, 100, minPower, maxPower);
   PWM.set_channel_value(ENA_Channel, resultValue ); 
+  delay(15);
+  PWM.set_channel_value(ENB_Channel, resultValue ); 
+
   return resultValue;
 }
 
@@ -44,8 +57,12 @@ int forward(MotorShield PWM, int value) {
 int backward(MotorShield PWM, int value) {
   PWM.set_channel_value(IN1_Channel, 4095 );
   PWM.set_channel_value(IN2_Channel, 0);
+  PWM.set_channel_value(IN3_Channel, 4095 );
+  PWM.set_channel_value(IN4_Channel, 0);
+  
   int resultValue = map(value, 0, 100, minPower, maxPower);
   PWM.set_channel_value(ENA_Channel, resultValue ); 
+  PWM.set_channel_value(ENB_Channel, resultValue ); 
   return resultValue;
 }
 
@@ -58,5 +75,46 @@ int stop(MotorShield PWM) {
   PWM.set_channel_value(IN1_Channel, 0 );
   PWM.set_channel_value(IN2_Channel, 0);
   PWM.set_channel_value(ENA_Channel, 0);
+  PWM.set_channel_value(IN3_Channel, 0 );
+  PWM.set_channel_value(IN4_Channel, 0);
+  PWM.set_channel_value(ENB_Channel, 0);
   return 1;
 }
+
+
+/**
+ * Turn Left
+*/
+
+int turnleft(MotorShield PWM, int value) {
+  PWM.set_channel_value(IN1_Channel, 4095 );
+  PWM.set_channel_value(IN2_Channel, 0);
+  PWM.set_channel_value(IN3_Channel, 0 );
+  PWM.set_channel_value(IN4_Channel, 4095);
+  
+  int resultValue = map(value, 0, 100, minPower, maxPower);
+  PWM.set_channel_value(ENA_Channel, resultValue ); 
+  PWM.set_channel_value(ENB_Channel, resultValue ); 
+
+  return resultValue;
+}
+
+
+/**
+ * Turn Right
+*/
+
+int turnright(MotorShield PWM, int value) {
+  PWM.set_channel_value(IN1_Channel, 0 );
+  PWM.set_channel_value(IN2_Channel, 4095);
+  PWM.set_channel_value(IN3_Channel, 4095 );
+  PWM.set_channel_value(IN4_Channel, 0);
+  
+  int resultValue = map(value, 0, 100, minPower, maxPower);
+  PWM.set_channel_value(ENA_Channel, resultValue ); 
+  PWM.set_channel_value(ENB_Channel, resultValue ); 
+
+  return resultValue;
+}
+
+

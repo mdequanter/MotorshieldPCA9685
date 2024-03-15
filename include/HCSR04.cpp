@@ -30,14 +30,8 @@ float getDistance() {
   // Meet de duur van het echo signaal
   duration = pulseIn(echoPin, HIGH);
 
-  Serial.println(duration);
+  //Serial.println(duration);
   // Bereken de afstand in centimeters
   distance = duration * 0.034 / 2;
-
-  // Toon de afstand op de seriële monitor
-  Serial.print("Afstand: ");
-  Serial.print(distance);
-  Serial.println(" cm");
-
   return distance;  
 }

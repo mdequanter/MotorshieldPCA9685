@@ -74,8 +74,11 @@ const char* htmlContent = R"html(
     
     <h2>Motor Besturing</h2>
     <div class="controls">
+        <button class="button" onclick="setMotorDirection('links')">Links</button>
         <button class="button" onclick="setMotorDirection('vooruit')">Vooruit</button>
+         <button class="button" onclick="setMotorDirection('stop')">STOP</button>
         <button class="button" onclick="setMotorDirection('achteruit')">Achteruit</button>
+        <button class="button" onclick="setMotorDirection('rechts')">Rechts</button>
         <input type="range" id="motorSpeed" min="0" max="100" value="0" class="range-slider">
         <span id="speedValue" class="range-value">0%</span>
     </div>
@@ -99,6 +102,8 @@ const char* htmlContent = R"html(
             console.log("Motor " + direction + " met snelheid " + speed + "%");
             updateURL('direction', direction);
             updateURL('speed', speed);
+            submitState();
+
         }
 
         document.getElementById("motorSpeed").oninput = function() {

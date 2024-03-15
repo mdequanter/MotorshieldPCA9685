@@ -2,6 +2,7 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+#include <ArduinoJson.h>
 
 
 
@@ -13,16 +14,57 @@
 #include "MOTOR.cpp" //  Methods to use L298N 2 channel H-Bridge motor shield
 #include "webcontent.cpp" // Html content of web interface
 #include "HCSR04.cpp"
+#include "DallasTemperature.cpp"
+
+//const char* ssid = "DUCK";
+//const char* password = "DUCK123$";
+
+const char* ssid = "DINNO";
+const char* password = "geheim123$";
 
 
-
-const char* ssid = "DUCK";
-const char* password = "DUCK123$";
 
 WebServer server(80);
 MotorShield PWM;
 
+#include "communication.cpp"
+
 int MIN_VALUE = 0;
+
+
+int count = 0;
+
+
+void handleTemperature() {
+
+  unsigned long startTime = millis();
+  unsigned long duration = 20000;
+
+  float temperature = getTemperature();
+
+
+  String webContent = "<!DOCTYPE html><html><head><title>Temperatuur</title>";
+  webContent += "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
+  webContent += "<meta http-equiv='refresh' content='1'>"; // Herlaad elke seconde
+  webContent += "</head><body style='text-align: center;'>";
+  webContent += "<h1>Temperature sensor (Dallas)</h1>";
+  webContent += "<p>Temperature: ";
+  webContent += String(temperature);
+  webContent +=" &deg; Celcius</p>";
+  webContent += "</body></html>";
+
+  server.send(200, "text/html", webContent );
+
+}
+
+
+void sendSerialData() {
+  bool sensordata = sendSensorData();
+  server.send(200, "text/html", "Data Send" );
+}
+
+
+
 
 
 void handleDistance() {
@@ -37,6 +79,7 @@ void handleDistance() {
   webContent += "<p>Distance: ";
   webContent += String(distance);
   webContent += " cm</p>";
+  webContent += "<p>*  Automatic distance detection via leds is running for 20 seconds.</p>";
   webContent += "</body></html>";
 
   server.send(200, "text/html", webContent );
@@ -74,7 +117,7 @@ void handleDistance() {
       setDegrees(PWM, 1, 89+mappedValue);
     }
 
-    delay(25);
+    delay(250);
 
 
     if (millis() - startTime >= duration) {
@@ -103,6 +146,16 @@ void handleRoot() {
     if (server.arg("direction") == "achteruit") {
       backward(PWM, speed);
     }
+    if (server.arg("direction") == "links") {
+      turnleft(PWM, speed);
+    }
+    if (server.arg("direction") == "rechts") {
+      turnright(PWM, speed);
+    }    
+    if (server.arg("direction") == "stop") {
+      stop(PWM);
+    }    
+
   }
       
   // 'servoPosition' parameter
@@ -186,7 +239,10 @@ void setup() {
   server.on("/", handleRoot);
 
   server.on("/distance", handleDistance);
-  
+  server.on("/temperature", handleTemperature);
+  server.on("/sendSerialData", sendSerialData);
+
+
   server.begin();
 
   pinMode(12, OUTPUT);// Set de trigPin als een uitgang
@@ -200,7 +256,8 @@ void loop() {
 
   server.handleClient();
   delay(2);
-
+  //sendSensorData();
+  readCommandsFromSerial();
 }
 
 
