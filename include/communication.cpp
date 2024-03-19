@@ -1,5 +1,17 @@
 /*
 Module to communicate with the world
+
+Json Format :
+
+{
+  "direction": "links",
+  "speed": 5,
+  "servoPosition": 102,
+  "trafficLight": "orange"
+}
+
+
+
 */
 
 const int bufferSize = 1024;
@@ -18,11 +30,11 @@ bool sendSensorData() {
 
 void readCommandsFromSerial() {
   // Controleer of er gegevens beschikbaar zijn om te lezen van de seriële poort
-  if (Serial.available() > 0) {
+  if (Serial2.available() > 0) {
         // Maak een buffer aan om de ontvangen gegevens op te slaan
         char jsonBuffer[bufferSize];
         // Lees de gegevens van de seriële poort en sla ze op in de buffer
-        int bytesRead = Serial.readBytesUntil('\n', jsonBuffer, bufferSize);
+        int bytesRead = Serial2.readBytesUntil('\n', jsonBuffer, bufferSize);
         // Voeg een null-terminator toe aan het einde van de buffer
         jsonBuffer[bytesRead] = '\0';
         

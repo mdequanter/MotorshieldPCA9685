@@ -6,6 +6,7 @@
 
 
 
+
 #include "MotorShield_PCA9685.h"  // Custom designed library to control PCA9685 (16-channel, 12-bit PWM Fm+ I2C-bus LED controller)
 #include "CCR.cpp"   // continuous rotation servo controls methods
 #include "SG90.cpp"  // standard 90 to 180 degrees servo control
@@ -15,13 +16,13 @@
 #include "webcontent.cpp" // Html content of web interface
 #include "HCSR04.cpp"
 #include "DallasTemperature.cpp"
+#include "rgb_lcd.cpp"
 
-//const char* ssid = "DUCK";
-//const char* password = "DUCK123$";
+const char* ssid = "DUCK";
+const char* password = "DUCK123$";
 
-const char* ssid = "xxxxxx";
-const char* password = "xxxxxxx";
-
+//const char* ssid = "DINNO";
+//const char* password = "geheim123$";
 
 
 WebServer server(80);
@@ -33,6 +34,11 @@ int MIN_VALUE = 0;
 
 
 int count = 0;
+
+
+
+rgb_lcd lcd;
+
 
 
 void handleTemperature() {
@@ -64,6 +70,26 @@ void sendSerialData() {
 }
 
 
+/**
+ * Read analog input on a ADC pin
+*/
+
+float getAnalogInputVoltage (int analogInPin) {
+  
+  int sensorValue = 0;
+  int runningTotal = 0;
+  sensorValue = analogRead(analogInPin);
+  runningTotal+=sensorValue;
+  delay(20);
+  sensorValue = analogRead(analogInPin);
+  runningTotal+=sensorValue;
+  delay(20);
+  sensorValue = analogRead(analogInPin);
+  runningTotal+=sensorValue;
+  float voltage = (runningTotal * 2 * 1.06 * (3.3 / 4095.0))/3; // Converteer de analoge waarde naar spanning in volt
+  //float voltage = sensorValue * 1.0; // Converteer de analoge waarde naar spanning in volt
+  return voltage;
+}
 
 
 
@@ -132,8 +158,15 @@ void handleDistance() {
 
 }
 
-
-
+String replaceString(String original, const String& find, const String& replace) {
+    int startPos = original.indexOf(find);
+    if (startPos == -1) {
+        // Als het te vervangen deel niet gevonden wordt, retourneer het origineel
+        return original;
+    }
+    int endPos = startPos + find.length();
+    return original.substring(0, startPos) + replace + original.substring(endPos);
+}
 
 void handleRoot() { 
   // 'speed' parameter
@@ -186,23 +219,68 @@ void handleRoot() {
       setLed(PWM,9,100);
       setLed(PWM,10,0);
     }
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Command OK");
+    lcd.setCursor(0, 1);
+    lcd.print(ssid);
+    lcd.print(" ");
+
+
+
+    lcd.setCursor(0, 1);
+    lcd.print(ssid);
+    lcd.print(" ");
+    long rssi = WiFi.RSSI();
+    lcd.print(rssi);
+    lcd.print(" dBm");
+
   }
 
-  server.send(200, "text/html", htmlContent);
+  String newHtml = htmlContent;
+  
+  float temperature = getTemperature();
+  
+  Serial.println(temperature);
+
+
+  newHtml = replaceString(htmlContent, " xxxTEMPERATURExxx", String(temperature));
+
+
+  float distance =  0.00;
+  distance = getDistance();
+  String newHtml2 = replaceString(newHtml, " xxxDISTANCExxx", String(distance));
+
+
+  float analogInputVoltage = getAnalogInputVoltage(35);
+  String newHtml3 = replaceString(newHtml2, " xxxINPUTVOLTAGExxx", String(analogInputVoltage));
+
+
+  server.send(200, "text/html", newHtml3);
 }
 
 
 
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
+
+  lcd.begin(16, 2);
+  lcd.setRGB(0, 255, 0);  // Groene achtergrondverlichting (R,G,B)
+  lcd.print("Starting ....");
+
+
   if(PWM.begin()) {
     PWM.init(MIN_VALUE);
   }
   PWM.set_hz(50);
+  
+  Serial1.begin(9600);
 
 
- WiFi.mode(WIFI_STA);
+
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.println("");
 
@@ -215,7 +293,7 @@ void setup() {
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());  
+  Serial.println(String(WiFi.localIP()));  
 
   setLed(PWM,8,0);
   setLed(PWM,9,0);
@@ -248,7 +326,17 @@ void setup() {
   pinMode(12, OUTPUT);// Set de trigPin als een uitgang
   pinMode(13, INPUT); // Set de echoPin als een ingang
 
-  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(WiFi.localIP());
+  lcd.setCursor(0, 1);
+  lcd.print(ssid);
+  lcd.print(" ");
+  long rssi = WiFi.RSSI();
+  lcd.print(rssi);
+  lcd.print(" dBm");
+
+
 }
 
 

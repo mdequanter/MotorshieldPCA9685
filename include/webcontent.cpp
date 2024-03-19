@@ -70,9 +70,9 @@ const char* htmlContent = R"html(
 </head>
 <body>
 
-    <button class="button" onclick="submitState()">Verzenden van Toestand</button>
+    <button class="button" onclick="submitState()">Send new settings</button>
     
-    <h2>Motor Besturing</h2>
+    <h2>Motor control</h2>
     <div class="controls">
         <button class="button" onclick="setMotorDirection('links')">Links</button>
         <button class="button" onclick="setMotorDirection('vooruit')">Vooruit</button>
@@ -83,17 +83,27 @@ const char* htmlContent = R"html(
         <span id="speedValue" class="range-value">0%</span>
     </div>
 
-    <h2>Servo Besturing</h2>
+    <h2>Servo control</h2>
     <div class="controls">
         <input type="range" id="servoPosition" min="0" max="180" value="90" class="range-slider">
         <span id="positionValue" class="range-value">90</span>
     </div>
 
-    <h2>Verkeerslicht</h2>
+    <h2>Lights</h2>
     <div class="controls">
         <button onclick="setTrafficLight('red')" id="red" class="light"></button>
         <button onclick="setTrafficLight('orange')" id="orange" class="light"></button>
         <button onclick="setTrafficLight('green')" id="green" class="light"></button>
+    </div>
+    <div class="controls">
+    <h2>Probe temperature</h2>
+    <p>Temperature :  xxxTEMPERATURExxx &deg; Celcius</p>
+    <h2>Ultrasonic sensor</h2>
+    <p>Distance :  xxxDISTANCExxx cm</p>
+    <h2>Battery status</h2>
+    <p>Voltage :  xxxINPUTVOLTAGExxx V</p>
+
+    
     </div>
 
     <script>
