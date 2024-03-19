@@ -32,3 +32,13 @@ With the scipts it should be fairly easy to implement a complete motor/servo/LED
 <h2>Webpage that is running on the ESP32</h2>
 
 ![image](https://github.com/mdequanter/MotorshieldPCA9685/assets/74420584/fed0e65e-3fb8-4675-8889-a53a324c08a0)
+
+
+Prototype Model :
+
+![image](https://github.com/mdequanter/MotorshieldPCA9685/assets/74420584/0db3ce03-dc00-4294-9431-8aeee4008eea)
+
+![image](https://github.com/mdequanter/MotorshieldPCA9685/assets/74420584/2235676b-6e2b-472d-9a32-4beab2caf95d)
+
+
+
