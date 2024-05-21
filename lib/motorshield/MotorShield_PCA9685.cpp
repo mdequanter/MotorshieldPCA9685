@@ -38,7 +38,6 @@ MotorShield::MotorShield(uint8_t addr){
 bool MotorShield::begin()
 {
   if(checkI2c(0x00)) {
-    Serial.println("PCA9685 shield active");
     return true;
   } else{
     Serial.println("PCA9685 shield not found or an error orrured. Check power and IC2 pins");

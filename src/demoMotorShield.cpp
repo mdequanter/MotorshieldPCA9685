@@ -18,11 +18,17 @@
 #include "DallasTemperature.cpp"
 #include "rgb_lcd.cpp"
 
-const char* ssid = "DUCK";
-const char* password = "DUCK123$";
+rgb_lcd lcd;
 
-//const char* ssid = "DINNO";
-//const char* password = "geheim123$";
+#include "PIDCONTROLLER.cpp";
+
+//const char* ssid = "DUCK";
+//const char* password = "DUCK123$";
+
+const char* ssid = "DINNO";
+const char* password = "geheim123$";
+
+bool debugMode = false;
 
 
 WebServer server(80);
@@ -37,7 +43,10 @@ int count = 0;
 
 
 
-rgb_lcd lcd;
+
+
+
+
 
 
 
@@ -168,6 +177,7 @@ String replaceString(String original, const String& find, const String& replace)
     return original.substring(0, startPos) + replace + original.substring(endPos);
 }
 
+
 void handleRoot() { 
   // 'speed' parameter
   if (server.hasArg("speed") and  server.hasArg("direction")) {
@@ -197,6 +207,16 @@ void handleRoot() {
     setDegrees(PWM, 0, position);
     setDegrees(PWM, 1, position);
   }
+
+  // Pid parameter
+  if (server.hasArg("pid")) {
+    int S = server.arg("pid").toInt();
+    float KP  = server.arg("KP").toInt();
+    float KI  = server.arg("KI").toInt();
+    float KD  = server.arg("PD").toInt();
+    pidControl(PWM,S,KP,KI,KD);
+  }
+  
 
   //  'trafficLight' parameter (RED on channel 8,  Orange on channel 9 and green on channel 10)
   if (server.hasArg("trafficLight")) {
@@ -264,7 +284,7 @@ void handleRoot() {
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   lcd.begin(16, 2);
   lcd.setRGB(0, 255, 0);  // Groene achtergrondverlichting (R,G,B)
@@ -282,18 +302,20 @@ void setup() {
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  Serial.println("");
+  if (debugMode == true) Serial.println("");
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    if (debugMode == true) Serial.print(".");
   }
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(String(WiFi.localIP()));  
+  if (debugMode == true) {
+    Serial.println("");
+    Serial.print("Connected to ");
+    Serial.println(ssid);
+    Serial.print("IP address: ");
+    Serial.println(String(WiFi.localIP())); 
+  }
 
   setLed(PWM,8,0);
   setLed(PWM,9,0);

@@ -82,6 +82,16 @@ const char* htmlContent = R"html(
         <input type="range" id="motorSpeed" min="0" max="100" value="0" class="range-slider">
         <span id="speedValue" class="range-value">0%</span>
     </div>
+    <h2>PID control</h2>
+    <div class="controls">
+        <input type="range" id="pidrange" min="0" max="10000" value="0" class="range-slider">
+        <span id="pidValue" class="range-value">0</span>
+        <input type="text" id="KP" value="2.8">
+        <input type="text" id="KI" value="0.0">
+        <input type="text" id="KD" value="0.0">
+        <span id="pidValue" class="range-value">0</span>
+
+    </div>
 
     <h2>Servo control</h2>
     <div class="controls">
@@ -116,10 +126,31 @@ const char* htmlContent = R"html(
 
         }
 
+
+
         document.getElementById("motorSpeed").oninput = function() {
             document.getElementById("speedValue").innerHTML = this.value + "%";
             updateURL('speed', this.value);
         }
+
+        document.getElementById("pidrange").oninput = function() {
+            document.getElementById("pidValue").innerHTML = this.value + "%";
+            updateURL('pid', this.value);
+        }
+
+        document.getElementById("KP").oninput = function() {
+            document.getElementById("KP").innerHTML = this.value;
+            updateURL('KP', this.value);
+        }
+        document.getElementById("KI").oninput = function() {
+            document.getElementById("KI").innerHTML = this.value;
+            updateURL('KI', this.value);
+        }
+        document.getElementById("KD").oninput = function() {
+            document.getElementById("KD").innerHTML = this.value;
+            updateURL('KD', this.value);
+        }
+
 
         document.getElementById("servoPosition").oninput = function() {
             document.getElementById("positionValue").innerHTML = this.value;
@@ -151,6 +182,13 @@ const char* htmlContent = R"html(
             let direction = params.get('direction');
             let servoPosition = params.get('servoPosition');
             let trafficLight = params.get('trafficLight');
+            let pid = params.get('pid');
+
+            if(pid !== null) {
+                document.getElementById("pid").value = pid;
+                document.getElementById("pidValue").innerHTML = pid;
+            }
+
 
             if(speed !== null) {
                 document.getElementById("motorSpeed").value = speed;

@@ -15,7 +15,7 @@ IN1 = HIGH and IN2 LOW,  forward.  IN1=LOW and IN2=HIGH reverse.  IN1 = IN2 = LO
 */
 
 int minPower = 0;
-int maxPower = 4095;
+int maxPower = 4000;
 
 
 int IN1_Channel = 4;
@@ -30,11 +30,16 @@ int ENB_Channel = 14;
 
 
 
+
 /**
  * Drive forward
 */
 
 int forward(MotorShield PWM, int value) {
+
+  Serial.println("Drive Forward: ");
+  Serial.println(value);
+
   PWM.set_channel_value(IN1_Channel, 0 );
   PWM.set_channel_value(IN2_Channel, 4095);
   PWM.set_channel_value(IN3_Channel, 0 );
