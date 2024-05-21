@@ -22,11 +22,9 @@ rgb_lcd lcd;
 
 #include "PIDCONTROLLER.cpp";
 
-//const char* ssid = "DUCK";
-//const char* password = "DUCK123$";
+const char* ssid = "DUCK";
+const char* password = "DUCK123$";
 
-const char* ssid = "DINNO";
-const char* password = "geheim123$";
 
 bool debugMode = false;
 
